@@ -1,21 +1,34 @@
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, loginWithGoogle, logout } from "../firebase";
+import { auth } from "../firebase";
+import Auth from "./components/Auth";
+import AddTransaction from "./components/AddTransaction";
+import TransactionList from "./components/TransactionList";
+import ExpenseChart from "./components/ExpenseChart";
+import { useEffect, useState } from "react";
 
-const Auth = () => {
+const App = () => {
   const [user] = useAuthState(auth);
+  const [transactions, setTransactions] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Fetch transactions here and update state
+  }, [user]);
 
   return (
-    <div className="flex flex-col items-center p-4">
+    <div className="p-4 max-w-3xl mx-auto">
+      <h1 className="text-2xl font-bold text-center mb-4">💰 Personal Finance Tracker</h1>
+      <Auth />
       {user ? (
         <>
-          <p className="mb-2">Welcome, {user.displayName}</p>
-          <button onClick={logout} className="bg-red-500 p-2 text-white rounded">Logout</button>
+          <AddTransaction user={user} />
+          <TransactionList user={user} />
+          <ExpenseChart transactions={transactions} />
         </>
       ) : (
-        <button onClick={loginWithGoogle} className="bg-blue-500 p-2 text-white rounded">Login with Google</button>
+        <p className="text-center mt-4">Please log in to track your finances.</p>
       )}
     </div>
   );
 };
 
-export default Auth;
+export default App;

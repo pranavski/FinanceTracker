@@ -7,19 +7,26 @@ const TransactionList = ({ user }: { user: any }) => {
 
   useEffect(() => {
     const getTransactions = async () => {
+      if (!user) return;
+
       const q = query(collection(db, "transactions"), where("userId", "==", user.uid));
       const querySnapshot = await getDocs(q);
-      setTransactions(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setTransactions(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     };
     getTransactions();
   }, [user]);
 
   return (
-    <ul>
-      {transactions.map((tx) => (
-        <li key={tx.id}>{tx.category}: ${tx.amount} ({tx.type})</li>
-      ))}
-    </ul>
+    <div className="container">
+      <h2>Transaction History</h2>
+      <ul>
+        {transactions.map((tx) => (
+          <li key={tx.id} className="transaction-item">
+            <strong>{tx.transactionName}</strong>: {tx.category} - ${tx.amount} ({tx.type})
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 
